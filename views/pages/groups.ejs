@@ -1,0 +1,37 @@
+<div class="card">
+  <div class="card-header">
+    <h4><i class="fas fa-layer-group me-2"></i>Grup Perangkat</h4>
+  </div>
+  <div class="card-body">
+    <% if (groups && groups.length > 0) { %>
+    <div class="row">
+      <% groups.forEach(function(g) { %>
+      <div class="col-lg-4 col-md-6">
+        <div class="card mb-3">
+          <div class="card-body d-flex align-items-center">
+            <div class="me-3" style="font-size: 2rem; color: #6777ef;">
+              <i class="fas fa-folder"></i>
+            </div>
+            <div>
+              <h5 class="mb-1"><%= g %></h5>
+              <a href="/devices?group=<%= encodeURIComponent(g) %>" class="text-decoration-none small">
+                <i class="fas fa-arrow-right me-1"></i> Lihat Perangkat
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+    <% } else { %>
+    <div class="empty-state">
+      <i class="fas fa-layer-group"></i>
+      <h4>Belum ada grup</h4>
+      <p class="text-muted">Grup akan muncul setelah Anda menambahkan perangkat dengan grup tertentu.</p>
+      <a href="/devices/new" class="btn btn-primary mt-3">
+        <i class="fas fa-plus me-1"></i> Tambah Perangkat
+      </a>
+    </div>
+    <% } %>
+  </div>
+</div>

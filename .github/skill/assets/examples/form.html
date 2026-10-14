@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Form — Stisla</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stisla/css@3/dist/stisla.css" />
+  <style>
+    body { max-width: 640px; margin: 2rem auto; padding: 0 1rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card__header">
+      <h1 class="card__title">Create Customer</h1>
+    </div>
+    <div class="card__body">
+      <form class="space-y-4" onsubmit="event.preventDefault(); alert('Submitted')">
+        <div class="field">
+          <label class="field__label" for="name">Full name</label>
+          <input class="input" id="name" type="text" placeholder="Jane Doe" required />
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="email">Email</label>
+          <input class="input" id="email" type="email" placeholder="jane@example.com" required />
+          <p class="field__description">We'll send the invoice here.</p>
+        </div>
+
+        <div class="grid" style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
+          <div class="field">
+            <label class="field__label" for="plan">Plan</label>
+            <select class="select" id="plan">
+              <option value="free">Free</option>
+              <option value="pro" selected>Pro</option>
+              <option value="enterprise">Enterprise</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="field__label" for="seats">Seats</label>
+            <input class="input" id="seats" type="number" min="1" value="5" />
+          </div>
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="notes">Notes</label>
+          <textarea class="textarea" id="notes" rows="3" placeholder="Optional notes…"></textarea>
+        </div>
+
+        <label class="checkbox">
+          <input type="checkbox" />
+          <span>Send welcome email</span>
+        </label>
+
+        <div style="display:flex; gap:0.5rem; justify-content:flex-end; margin-top:1.5rem;">
+          <button type="button" class="button button--neutral">Cancel</button>
+          <button type="submit" class="button button--primary">Create customer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@stisla/vanilla@3/dist/stisla.js"></script>
+</body>
+</html>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title ? title + ' · ' : '' %><%= appName %></title>
+
+  <!-- Stisla v3 CSS -->
+  <link href="/vendor/@stisla/css/dist/stisla.css" rel="stylesheet">
+  <!-- App custom CSS -->
+  <link href="/dist/app.css" rel="stylesheet">
+
+  <meta name="csrf-token" content="<%= csrf %>">
+  <script src="/js/theme.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="app-sidebar" data-stisla-sidebar aria-label="Navigasi utama" style="--sidebar-bg: var(--color-surface);">
+      <header class="sidebar__header">
+        <a class="sidebar__brand" href="/" aria-label="<%= appName %> — Dashboard">
+          <span class="brand-mark"><i data-lucide="network"></i></span>
+          <span class="brand-copy"><strong><%= appName %></strong><small>Network operations</small></span>
+        </a>
+      </header>
+
+      <div class="sidebar__content">
+        <nav class="sidebar__menu" aria-label="Menu aplikasi">
+          <div class="sidebar__group">
+            <span class="sidebar__group-title">Menu</span>
+            <ul class="sidebar__list">
+              <li class="sidebar__item">
+                <a class="sidebar__button" href="/" <%= nav === 'dashboard' ? 'aria-current="page"' : '' %>>
+                  <i data-lucide="layout-dashboard"></i><span>Dashboard</span>
+                </a>
+              </li>
+              <li class="sidebar__item">
+                <a class="sidebar__button" href="/devices" <%= nav === 'devices' ? 'aria-current="page"' : '' %>>
+                  <i data-lucide="server"></i><span>Perangkat</span>
+                </a>
+              </li>
+              <li class="sidebar__item">
+                <a class="sidebar__button" href="/groups" <%= nav === 'groups' ? 'aria-current="page"' : '' %>>
+                  <i data-lucide="layers"></i><span>Grup</span>
+                </a>
+              </li>
+              <% if (user && user.role === 'admin') { %>
+              <li class="sidebar__item">
+                <a class="sidebar__button" href="/audit" <%= nav === 'audit' ? 'aria-current="page"' : '' %>>
+                  <i data-lucide="history"></i><span>Audit</span>
+                </a>
+              </li>
+              <% } %>
+              <li class="sidebar__item">
+                <a class="sidebar__button" href="/settings" <%= nav === 'settings' ? 'aria-current="page"' : '' %>>
+                  <i data-lucide="settings"></i><span>Pengaturan</span>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </nav>
+      </div>
+
+      <footer class="sidebar__footer">
+        <ul class="sidebar__list">
+          <li class="sidebar__item">
+            <button type="button" class="sidebar__button" id="theme-toggle" aria-label="Ganti tema terang atau gelap">
+              <i data-lucide="moon"></i><span>Tema</span>
+            </button>
+          </li>
+          <li class="sidebar__item">
+            <button type="button" class="sidebar__button" data-stisla-sidebar-toggle="collapse" aria-controls="app-sidebar" aria-expanded="true" aria-label="Ciutkan atau buka navigasi">
+              <i data-lucide="panel-left"></i><span>Ciutkan</span>
+            </button>
+          </li>
+        </ul>
+      </footer>
+    </aside>
+
+    <button type="button" class="sidebar-backdrop" data-stisla-sidebar-toggle="collapse" aria-label="Tutup navigasi" hidden></button>
+
+    <!-- Main column -->
+    <div class="app-main">
+      <!-- Navbar -->
+      <nav class="navbar navbar--block navbar--expand" aria-label="Utama">
+        <button type="button" class="navbar__toggle" data-stisla-sidebar-toggle="collapse" aria-controls="app-sidebar" aria-expanded="false" aria-label="Buka atau tutup navigasi">
+          <i data-lucide="menu"></i>
+        </button>
+        <span class="navbar__brand"><%= appName %></span>
+        <div class="navbar__menu">
+          <ul class="navbar__nav"></ul>
+          <% if (user) { %>
+          <div class="menu">
+            <button class="button button--ghost button--neutral" data-stisla-menu-trigger="user-menu" aria-haspopup="menu" aria-expanded="false" aria-controls="user-menu">
+              <i data-lucide="circle-user"></i>
+              <span><%= user.username %></span>
+              <i data-lucide="chevron-down"></i>
+            </button>
+            <div class="menu__popup" id="user-menu" data-stisla-menu role="menu" data-state="closed">
+              <div class="menu__group" role="group">
+                <h3 class="menu__group-label"><%= user.role === 'admin' ? 'Administrator' : 'User' %></h3>
+                <a href="/settings" class="menu__item" role="menuitem"><i data-lucide="user"></i><span>Profil</span></a>
+              </div>
+              <hr class="menu__separator" role="separator">
+              <form action="/auth/logout" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrf %>">
+                <button type="submit" class="menu__item menu__item--danger" role="menuitem">
+                  <i data-lucide="log-out"></i><span>Keluar</span>
+                </button>
+              </form>
+            </div>
+          </div>
+          <% } %>
+        </div>
+      </nav>
+
+      <!-- Content -->
+      <main class="app-content">
+        <div class="page">
+          <% if (flash) { %>
+          <div class="alert alert--<%= flash.type || 'info' %> alert--dismissible">
+            <span><%= flash.message %></span>
+            <button class="alert__close" data-stisla-dismiss>&times;</button>
+          </div>
+          <% } %>
+
+          <%- body %>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="/vendor/lucide/dist/umd/lucide.min.js"></script>
+  <script src="/vendor/@stisla/vanilla/dist/stisla.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

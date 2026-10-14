@@ -1,0 +1,42 @@
+<% items.forEach(function(d) { %>
+<tr>
+  <td>
+    <span class="status-indicator <%= d.status || 'unknown' %>"></span>
+    <span class="badge badge-<%= d.status === 'online' ? 'success' : d.status === 'offline' ? 'danger' : 'secondary' %>">
+      <%= d.status || 'unknown' %>
+    </span>
+  </td>
+  <td>
+    <a href="/devices/<%= d.uuid %>" class="fw-semibold text-decoration-none">
+      <%= d.name %>
+    </a>
+    <% if (d.type) { %>
+    <small class="d-block text-muted"><%= d.type %></small>
+    <% } %>
+  </td>
+  <td><code><%= d.ip %>:<%= d.port %></code></td>
+  <td><%= d.group || '-' %></td>
+  <td>
+    <% if (d.last_online) { %>
+    <time data-ts="<%= d.last_online %>"></time>
+    <% } else { %>
+    <span class="text-muted">-</span>
+    <% } %>
+  </td>
+  <td class="text-end">
+    <div class="dropdown">
+      <button class="btn btn-sm btn-icon" data-bs-toggle="dropdown">
+        <i class="fas fa-ellipsis-v"></i>
+      </button>
+      <ul class="dropdown-menu dropdown-menu-end">
+        <li><a class="dropdown-item" href="/devices/<%= d.uuid %>"><i class="fas fa-info-circle me-2"></i> Detail</a></li>
+        <% if (user && user.role === 'admin') { %>
+        <li><a class="dropdown-item" href="/devices/<%= d.uuid %>/edit"><i class="fas fa-edit me-2"></i> Edit</a></li>
+        <li><hr class="dropdown-divider"></li>
+        <li><a class="dropdown-item text-danger" href="#" data-delete="<%= d.uuid %>"><i class="fas fa-trash me-2"></i> Hapus</a></li>
+        <% } %>
+      </ul>
+    </div>
+  </td>
+</tr>
+<% }); %>

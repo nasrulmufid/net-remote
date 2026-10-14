@@ -1,0 +1,119 @@
+<section class="card device-overview" aria-labelledby="device-name-heading">
+  <div class="card__header">
+    <div>
+      <p class="eyebrow">DETAIL PERANGKAT</p>
+      <h1 class="card__title" id="device-name-heading"><i data-lucide="server"></i> <%= device.name %></h1>
+    </div>
+    <div class="card__actions">
+      <span class="badge badge--<%= device.status === 'online' ? 'success' : device.status === 'offline' ? 'danger' : 'secondary' %>">
+        <span class="badge__dot"></span> <%= device.status || 'unknown' %>
+      </span>
+      <% if (user && user.role === 'admin') { %>
+      <a href="/devices/<%= device.uuid %>/edit" class="button button--primary button--sm">
+        <i data-lucide="pencil"></i> Edit
+      </a>
+      <% } %>
+    </div>
+  </div>
+  <div class="card__body">
+    <div class="row">
+      <div class="col-12 col-md-6">
+        <dl class="detail-list">
+          <dt>UUID</dt><dd><code><%= device.uuid %></code></dd>
+          <dt>Alamat</dt><dd><code><%= device.ip %>:<%= device.port %></code></dd>
+          <dt>Protokol</dt><dd><%= (device.protocol || 'http').toUpperCase() %></dd>
+          <dt>Tipe</dt><dd><%= device.type || '-' %></dd>
+          <dt>Vendor</dt><dd><%= device.vendor || '-' %></dd>
+          <dt>Lokasi</dt><dd><%= device.location || '-' %></dd>
+          <dt>Grup</dt><dd><%= device.group_tag || '-' %></dd>
+        </dl>
+      </div>
+      <div class="col-12 col-md-6">
+        <dl class="detail-list">
+          <dt>Latency</dt><dd><%= device.latency_ms != null ? device.latency_ms + ' ms' : '-' %></dd>
+          <dt>Terakhir Online</dt><dd><% if (device.last_seen) { %><time data-ts="<%= device.last_seen %>"></time><% } else { %>-<% } %></dd>
+          <dt>Terakhir Dicek</dt><dd><% if (checks && checks.length && checks[0].checked_at) { %><time data-ts="<%= checks[0].checked_at %>"></time><% } else { %>-<% } %></dd>
+          <dt>Remote Access</dt><dd><a href="/remote/<%= device.uuid %>" target="_blank" rel="noopener noreferrer" class="button button--success button--sm"><i data-lucide="external-link"></i> Buka</a></dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Uptime Chart -->
+<div class="card">
+  <div class="card__header">
+    <h4 class="card__title"><i data-lucide="chart-line"></i> Uptime &amp; Latency</h4>
+    <div class="card__actions">
+      <span id="uptime-pct" class="text-muted"></span>
+      <select id="chart-days" class="input input--sm">
+        <option value="1">1 hari</option>
+        <option value="7" selected>7 hari</option>
+        <option value="14">14 hari</option>
+        <option value="30">30 hari</option>
+      </select>
+    </div>
+  </div>
+  <div class="card__body">
+    <div id="uptime-chart" data-uuid="<%= device.uuid %>"></div>
+  </div>
+</div>
+
+<!-- Recent Checks -->
+<div class="card">
+  <div class="card__header">
+    <h4 class="card__title"><i data-lucide="activity"></i> Pengecekan Terakhir</h4>
+  </div>
+  <div class="card__body">
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr><th>Waktu</th><th>Status</th><th>Latency</th></tr>
+        </thead>
+        <tbody>
+          <% (checks || []).forEach(function(c) { %>
+          <tr>
+            <td><time data-ts="<%= c.checked_at %>"></time></td>
+            <td><span class="badge badge--<%= c.status === 'online' ? 'success' : 'danger' %>"><%= c.status %></span></td>
+            <td><%= c.latency_ms != null ? c.latency_ms + ' ms' : '-' %></td>
+          </tr>
+          <% }); %>
+          <% if (!checks || checks.length === 0) { %>
+          <tr><td colspan="3" class="text-center text-muted">Belum ada data pengecekan</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Remote Access -->
+<div class="card">
+  <div class="card__header">
+    <h4 class="card__title"><i data-lucide="history"></i> Akses Remote Terakhir</h4>
+  </div>
+  <div class="card__body">
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr><th>Waktu</th><th>User</th><th>IP</th></tr>
+        </thead>
+        <tbody>
+          <% (accesses || []).forEach(function(a) { %>
+          <tr>
+            <td><time data-ts="<%= a.created_at %>"></time></td>
+            <td><%= a.username || '-' %></td>
+            <td><code><%= a.ip_address || '-' %></code></td>
+          </tr>
+          <% }); %>
+          <% if (!accesses || accesses.length === 0) { %>
+          <tr><td colspan="3" class="text-center text-muted">Belum ada akses remote</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<script src="/vendor/apexcharts/apexcharts.min.js"></script>
+<script src="/js/charts.js"></script>

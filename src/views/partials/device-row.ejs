@@ -1,0 +1,41 @@
+<% items.forEach(function(d) { %>
+<tr>
+  <td>
+    <span class="badge device-status device-status--<%= d.status === 'online' ? 'online' : d.status === 'offline' ? 'offline' : 'unknown' %>" aria-label="Status <%= d.status || 'unknown' %>">
+      <span class="badge__dot" aria-hidden="true"></span><%= d.status || 'unknown' %>
+    </span>
+  </td>
+  <td>
+    <a href="/devices/<%= d.uuid %>" class="link">
+      <%= d.name %>
+    </a>
+    <% if (d.type) { %>
+    <small class="text-muted" style="display: block;"><%= d.type %></small>
+    <% } %>
+  </td>
+  <td><code><%= d.ip %>:<%= d.port %></code></td>
+  <td><%= d.group_tag || '-' %></td>
+  <td>
+    <% if (d.last_seen) { %>
+    <time data-ts="<%= d.last_seen %>"></time>
+    <% } else { %>
+    <span class="text-muted">-</span>
+    <% } %>
+  </td>
+  <td class="text-right">
+    <div class="menu">
+      <button type="button" class="button button--icon button--ghost button--neutral" data-stisla-menu-trigger="row-menu-<%= d.uuid %>" aria-haspopup="menu" aria-expanded="false" aria-controls="row-menu-<%= d.uuid %>" aria-label="Aksi untuk <%= d.name %>">
+        <i data-lucide="ellipsis-vertical"></i>
+      </button>
+      <div class="menu__popup" id="row-menu-<%= d.uuid %>" data-stisla-menu role="menu" data-state="closed">
+        <a class="menu__item" href="/devices/<%= d.uuid %>" role="menuitem"><i data-lucide="info"></i><span>Detail</span></a>
+        <% if (user && user.role === 'admin') { %>
+        <a class="menu__item" href="/devices/<%= d.uuid %>/edit" role="menuitem"><i data-lucide="pencil"></i><span>Edit</span></a>
+        <hr class="menu__separator" role="separator">
+        <a class="menu__item menu__item--danger" href="#" role="menuitem" data-delete="<%= d.uuid %>"><i data-lucide="trash-2"></i><span>Hapus</span></a>
+        <% } %>
+      </div>
+    </div>
+  </td>
+</tr>
+<% }); %>

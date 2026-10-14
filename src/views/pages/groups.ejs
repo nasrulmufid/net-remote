@@ -1,0 +1,40 @@
+<section class="card groups-card" aria-labelledby="groups-heading">
+  <div class="card__header">
+    <div>
+      <p class="eyebrow">ORGANISASI</p>
+      <h1 class="card__title" id="groups-heading"><i data-lucide="layers"></i> Grup Perangkat</h1>
+      <p class="section-caption">Kelompokkan perangkat agar pemantauan lebih mudah.</p>
+    </div>
+  </div>
+  <div class="card__body">
+    <% if (groups && groups.length > 0) { %>
+    <div class="row">
+      <% groups.forEach(function(g) { %>
+      <div class="col-12 col-md-6 col-lg-4">
+        <a class="card card--clickable group-card" href="/devices?tag=<%= encodeURIComponent(g.name) %>" aria-label="Lihat perangkat grup <%= g.name %>">
+          <div class="card__body d-flex align-items-center gap-3">
+            <div class="card__icon"><i data-lucide="folder"></i></div>
+            <div>
+              <h5 class="mb-0"><%= g.name %></h5>
+              <small class="text-muted"><%= g.total %> perangkat &middot; <%= g.online %> online</small>
+              <span class="group-card__meter" aria-label="<%= g.online %> dari <%= g.total %> perangkat online"><span style="width: <%= g.total ? Math.round((g.online / g.total) * 100) : 0 %>%"></span></span>
+            </div>
+          </div>
+        </a>
+      </div>
+      <% }); %>
+    </div>
+    <% } else { %>
+    <div class="empty-state">
+      <div class="empty-state__icon"><i data-lucide="layers"></i></div>
+      <h4>Belum ada grup</h4>
+      <p>Grup akan muncul setelah Anda menambahkan perangkat dengan grup tertentu.</p>
+      <% if (user && user.role === 'admin') { %>
+      <a href="/devices/new" class="button button--primary">
+        <i data-lucide="plus"></i> Tambah Perangkat
+      </a>
+      <% } %>
+    </div>
+    <% } %>
+  </div>
+</section>

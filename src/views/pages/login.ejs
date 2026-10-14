@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= appName %> &middot; Masuk</title>
+
+  <!-- Stisla v3 CSS -->
+  <link href="/vendor/@stisla/css/dist/stisla.css" rel="stylesheet">
+  <!-- App custom CSS -->
+  <link href="/dist/app.css" rel="stylesheet">
+
+  <script src="/js/theme.js"></script>
+</head>
+<body class="login-page">
+  <main class="login-frame">
+    <section class="login-aside" aria-label="Tentang NetRemote">
+      <a class="login-brand" href="/" aria-label="NetRemote"><span class="brand-mark"><i data-lucide="network"></i></span> <strong><%= appName %></strong></a>
+      <div class="login-aside__copy">
+        <p class="eyebrow">PUSAT OPERASI JARINGAN</p>
+        <h1>Semua perangkat. Satu kendali.</h1>
+        <p>Pantau konektivitas, kelola inventaris, dan akses perangkat penting dari satu ruang kerja yang aman.</p>
+      </div>
+      <div class="login-signal" aria-hidden="true"></div>
+    </section>
+    <section class="card login-card" aria-labelledby="login-heading">
+      <div class="login-card__header">
+        <div class="login-card__icon"><i data-lucide="shield-check"></i></div>
+        <p class="eyebrow">AKSES ADMINISTRATOR</p>
+        <h2 class="login-card__title" id="login-heading">Selamat datang kembali</h2>
+        <p class="login-card__subtitle">Masuk untuk melanjutkan ke dashboard Anda.</p>
+      </div>
+
+    <% if (error) { %>
+    <div class="alert alert--danger alert--dismissible login-card__alert">
+      <i data-lucide="circle-alert"></i>
+      <span><%= error %></span>
+      <button class="alert__close" data-stisla-dismiss>&times;</button>
+    </div>
+    <% } %>
+
+    <div class="card__body">
+      <form action="/auth/login" method="POST" class="login-form">
+        <input type="hidden" name="_csrf" value="<%= csrf %>">
+        <input type="hidden" name="next" value="<%= next %>">
+
+        <div class="field">
+          <label class="field__label" for="username">Username</label>
+          <input class="input" id="username" name="username" type="text" placeholder="Masukkan username" required autofocus autocomplete="username">
+        </div>
+
+        <div class="field">
+          <label class="field__label" for="password">Password</label>
+          <input class="input" id="password" name="password" type="password" placeholder="Masukkan password" required autocomplete="current-password">
+        </div>
+
+        <button type="submit" class="button button--primary button--block">
+          <i data-lucide="log-in"></i> Masuk
+        </button>
+      </form>
+    </div>
+    </section>
+  </main>
+
+  <script src="/vendor/lucide/dist/umd/lucide.min.js"></script>
+  <script src="/vendor/@stisla/vanilla/dist/stisla.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Table — Stisla</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stisla/css@3/dist/stisla.css" />
+  <style>
+    body { max-width: 960px; margin: 2rem auto; padding: 0 1rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="card__header" style="display:flex; align-items:center; justify-content:space-between;">
+      <h1 class="card__title">Customers</h1>
+      <button class="button button--primary button--sm">Add customer</button>
+    </div>
+    <div class="card__body" style="padding:0;">
+      <div class="table-responsive">
+        <table class="table table--hover table--striped">
+          <thead class="table__head--alt">
+            <tr>
+              <th style="width:2.5rem;">
+                <input type="checkbox" class="checkbox" aria-label="Select all" />
+              </th>
+              <th>Name</th>
+              <th>Email</th>
+              <th>Plan</th>
+              <th>Status</th>
+              <th class="text-end">MRR</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox" class="checkbox" /></td>
+              <td>
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span class="avatar avatar--sm">SR</span>
+                  <span>Sonya Ryan</span>
+                </div>
+              </td>
+              <td>sonya@ryanco.io</td>
+              <td>Pro</td>
+              <td><span class="badge badge--soft badge--success">Active</span></td>
+              <td class="text-end">$49</td>
+              <td class="text-end">
+                <button class="button button--ghost button--icon-only button--sm" aria-label="Edit">✎</button>
+              </td>
+            </tr>
+            <tr data-state="active">
+              <td><input type="checkbox" class="checkbox" checked /></td>
+              <td>
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span class="avatar avatar--sm">MC</span>
+                  <span>Marcus Chen</span>
+                </div>
+              </td>
+              <td>m.chen@northwind.co</td>
+              <td>Enterprise</td>
+              <td><span class="badge badge--soft badge--success">Active</span></td>
+              <td class="text-end">$299</td>
+              <td class="text-end">
+                <button class="button button--ghost button--icon-only button--sm" aria-label="Edit">✎</button>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="checkbox" /></td>
+              <td>
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span class="avatar avatar--sm">GB</span>
+                  <span>Gilberto Botsford</span>
+                </div>
+              </td>
+              <td>g.b@botsford.dev</td>
+              <td>Free</td>
+              <td><span class="badge badge--soft badge--warning">Trial</span></td>
+              <td class="text-end">$0</td>
+              <td class="text-end">
+                <button class="button button--ghost button--icon-only button--sm" aria-label="Edit">✎</button>
+              </td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" class="checkbox" /></td>
+              <td>
+                <div style="display:flex; align-items:center; gap:0.75rem;">
+                  <span class="avatar avatar--sm">AC</span>
+                  <span>Acme Corp</span>
+                </div>
+              </td>
+              <td>billing@acme.co</td>
+              <td>Pro</td>
+              <td><span class="badge badge--soft badge--danger">Churned</span></td>
+              <td class="text-end">$0</td>
+              <td class="text-end">
+                <button class="button button--ghost button--icon-only button--sm" aria-label="Edit">✎</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@stisla/vanilla@3/dist/stisla.js"></script>
+</body>
+</html>

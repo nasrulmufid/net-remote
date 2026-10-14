@@ -1,0 +1,137 @@
+<% var s = stats || { total: 0, online: 0, offline: 0, unknown: 0 }; %>
+
+<header class="dashboard-intro">
+  <div>
+    <p class="eyebrow"><span class="eyebrow__pulse" aria-hidden="true"></span> OPERASI JARINGAN <span class="eyebrow__divider">/</span> <%= nav === 'dashboard' ? 'RINGKASAN' : 'INVENTARIS' %></p>
+    <h1><%= nav === 'dashboard' ? 'Selamat datang di pusat operasi' : 'Inventaris perangkat' %></h1>
+    <p class="dashboard-intro__copy"><%= nav === 'dashboard' ? 'Pantau kesehatan perangkat dan respons jaringan Anda dalam satu tampilan.' : 'Cari, kelompokkan, dan kelola perangkat yang terhubung ke jaringan Anda.' %></p>
+  </div>
+  <div class="dashboard-intro__meta"><span class="live-indicator"><i data-lucide="radio" aria-hidden="true"></i> Pemantauan aktif</span><span id="last-refresh">Memperbarui status…</span></div>
+</header>
+
+<!-- Stats Cards -->
+<% if (showStats) { %>
+<div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mb-6">
+  <div class="card card--stat card--stat-primary">
+    <div class="card__body">
+      <div class="card__stat-icon"><i data-lucide="server"></i></div>
+      <div class="card__stat-label">Total Perangkat</div>
+      <div class="card__stat-value" data-stat="total"><%= s.total %></div>
+    </div>
+  </div>
+  <div class="card card--stat card--stat-success">
+    <div class="card__body">
+      <div class="card__stat-icon"><i data-lucide="circle-check"></i></div>
+      <div class="card__stat-label">Online</div>
+      <div class="card__stat-value" data-stat="online"><%= s.online %></div>
+    </div>
+  </div>
+  <div class="card card--stat card--stat-danger">
+    <div class="card__body">
+      <div class="card__stat-icon"><i data-lucide="circle-x"></i></div>
+      <div class="card__stat-label">Offline</div>
+      <div class="card__stat-value" data-stat="offline"><%= s.offline %></div>
+    </div>
+  </div>
+  <div class="card card--stat card--stat-warning">
+    <div class="card__body">
+      <div class="card__stat-icon"><i data-lucide="circle-help"></i></div>
+      <div class="card__stat-label">Unknown</div>
+      <div class="card__stat-value" data-stat="unknown"><%= s.unknown %></div>
+    </div>
+  </div>
+</div>
+<% } %>
+
+<!-- Device Table Card -->
+<section class="card device-table-card" aria-labelledby="device-list-heading">
+  <div class="card__header">
+    <div>
+      <h2 class="card__title" id="device-list-heading"><i data-lucide="list"></i> Daftar Perangkat</h2>
+      <p class="section-caption">Status langsung dan detail konektivitas</p>
+    </div>
+    <div class="device-toolbar">
+      <% if (user && user.role === 'admin') { %>
+      <input id="import-file" class="visually-hidden" type="file" accept=".xls,.xlsx,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" aria-label="Pilih file spreadsheet perangkat">
+      <a href="/api/devices/import-template.xls" class="button button--outline button--sm" aria-label="Unduh template impor XLS">
+        <i data-lucide="file-down" aria-hidden="true"></i> Template XLS
+      </a>
+      <button type="button" id="import-btn" class="button button--outline button--sm" aria-describedby="import-help">
+        <i data-lucide="upload" aria-hidden="true"></i> Impor spreadsheet
+      </button>
+      <button type="button" id="export-btn" class="button button--outline button--sm" aria-label="Ekspor perangkat sebagai CSV">
+        <i data-lucide="download" aria-hidden="true"></i> Ekspor CSV
+      </button>
+      <a href="/devices/new" class="button button--primary button--sm">
+        <i data-lucide="plus" aria-hidden="true"></i> Tambah perangkat
+      </a>
+      <% } %>
+    </div>
+  </div>
+  <div class="card__body">
+    <% if (user && user.role === 'admin') { %>
+    <p class="import-help" id="import-help">Impor daftar perangkat dari Excel (.xls atau .xlsx), maksimal 5 MB.</p>
+    <section class="import-feedback" id="import-feedback" aria-live="polite" aria-atomic="false" hidden>
+      <div class="import-feedback__heading"><span id="import-feedback-icon" aria-hidden="true"></span><strong id="import-feedback-title"></strong><button type="button" class="import-feedback__close" id="import-feedback-close" aria-label="Tutup hasil impor">&times;</button></div>
+      <p id="import-feedback-summary"></p>
+      <ul id="import-feedback-errors"></ul>
+    </section>
+    <% } %>
+    <form id="filters" class="filter-bar" role="search" aria-label="Filter perangkat">
+      <div class="field">
+        <label class="visually-hidden" for="device-search">Cari perangkat</label>
+        <input id="device-search" class="input" type="search" name="search" placeholder="Cari nama, alamat IP..." value="<%= (filters && filters.search) || '' %>">
+      </div>
+      <div class="field">
+        <label class="visually-hidden" for="device-status">Status</label>
+        <select id="device-status" name="status" class="select">
+          <option value="">Semua Status</option>
+          <option value="online" <%= (filters && filters.status === 'online') ? 'selected' : '' %>>Online</option>
+          <option value="offline" <%= (filters && filters.status === 'offline') ? 'selected' : '' %>>Offline</option>
+          <option value="unknown" <%= (filters && filters.status === 'unknown') ? 'selected' : '' %>>Unknown</option>
+        </select>
+      </div>
+      <div class="field">
+        <label class="visually-hidden" for="device-group">Grup</label>
+        <select id="device-group" name="tag" class="select">
+          <option value="">Semua Grup</option>
+          <% (groups || []).forEach(function(g) { %>
+          <option value="<%= g.name %>" <%= (filters && filters.tag === g.name) ? 'selected' : '' %>><%= g.name %></option>
+          <% }); %>
+        </select>
+      </div>
+      <button type="submit" class="button button--primary"><i data-lucide="filter" aria-hidden="true"></i> Terapkan filter</button>
+      <a href="<%= nav === 'dashboard' ? '/' : '/devices' %>" class="button button--ghost filter-reset">Atur ulang</a>
+    </form>
+
+    <div class="table-container" role="region" aria-label="Daftar perangkat" tabindex="0">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Status</th>
+            <th>Nama</th>
+            <th>Alamat</th>
+            <th>Grup</th>
+            <th>Terakhir Online</th>
+            <th class="text-right">Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="device-rows">
+          <%- include('../partials/device-rows', { items: items, user: user }) %>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="empty-state" id="device-empty-state" <%= items && items.length ? 'hidden' : '' %>>
+      <div class="empty-state__icon"><i data-lucide="server"></i></div>
+      <h4>Belum ada perangkat</h4>
+      <p>Tambahkan perangkat pertama Anda untuk mulai memantau.</p>
+      <% if (user && user.role === 'admin') { %>
+      <a href="/devices/new" class="button button--primary">
+        <i data-lucide="plus"></i> Tambah Perangkat
+      </a>
+      <% } %>
+      <a href="<%= nav === 'dashboard' ? '/' : '/devices' %>" class="button button--ghost">Atur ulang filter</a>
+    </div>
+  </div>
+</section>

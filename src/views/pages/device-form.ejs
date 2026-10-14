@@ -1,0 +1,94 @@
+<section class="card form-card" aria-labelledby="device-form-heading">
+  <div class="card__header">
+    <div>
+      <p class="eyebrow">INVENTARIS JARINGAN</p>
+      <h1 class="card__title" id="device-form-heading"><i data-lucide="<%= device ? 'pencil' : 'plus' %>"></i> <%= device ? 'Edit Perangkat' : 'Tambah Perangkat' %></h1>
+      <p class="section-caption">Lengkapi informasi koneksi dan pengelompokan perangkat.</p>
+    </div>
+  </div>
+  <div class="card__body">
+    <form id="device-form" class="form-layout" data-method="<%= device ? 'PUT' : 'POST' %>" data-action="<%= device ? '/api/devices/' + device.uuid : '/api/devices' %>" data-redirect="<%= device ? 'stay' : 'detail' %>">
+      <div class="field">
+        <label class="field__label" for="name">Nama Perangkat <span class="text-danger">*</span></label>
+        <input type="text" class="input" id="name" name="name" value="<%= device ? device.name : '' %>" required placeholder="Contoh: Server Produksi">
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="field">
+            <label class="field__label" for="ip">Alamat IP <span class="text-danger">*</span></label>
+            <input type="text" class="input" id="ip" name="ip" value="<%= device ? device.ip : '' %>" required placeholder="192.168.1.100">
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="field">
+            <label class="field__label" for="port">Port <span class="text-danger">*</span></label>
+            <input type="number" class="input" id="port" name="port" value="<%= device ? device.port : '80' %>" required min="1" max="65535">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="field">
+            <label class="field__label" for="protocol">Protokol</label>
+            <select class="input" id="protocol" name="protocol">
+              <option value="http" <%= !device || device.protocol !== 'https' ? 'selected' : '' %>>HTTP</option>
+              <option value="https" <%= device && device.protocol === 'https' ? 'selected' : '' %>>HTTPS</option>
+            </select>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="field">
+            <label class="field__label" for="vendor">Vendor</label>
+            <input type="text" class="input" id="vendor" name="vendor" value="<%= device ? device.vendor || '' : '' %>" maxlength="60" placeholder="Contoh: MikroTik">
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="location">Lokasi</label>
+        <input type="text" class="input" id="location" name="location" value="<%= device ? device.location || '' : '' %>" maxlength="120" placeholder="Contoh: Ruang server lantai 2">
+      </div>
+
+      <div class="row">
+        <div class="col-12 col-md-6">
+          <div class="field">
+            <label class="field__label" for="type">Tipe Perangkat</label>
+            <select class="input" id="type" name="type">
+              <option value="">- Pilih Tipe -</option>
+              <% (types || []).forEach(function(t) { %>
+              <option value="<%= t %>" <%= device && device.type === t ? 'selected' : '' %>><%= t %></option>
+              <% }); %>
+            </select>
+          </div>
+        </div>
+        <div class="col-12 col-md-6">
+          <div class="field">
+            <label class="field__label" for="group_tag">Grup</label>
+            <select class="input" id="group_tag" name="group_tag">
+              <option value="">- Pilih Grup -</option>
+              <% (groups || []).forEach(function(g) { %>
+              <option value="<%= g.name %>" <%= device && device.group_tag === g.name ? 'selected' : '' %>><%= g.name %></option>
+              <% }); %>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field__label" for="notes">Catatan</label>
+        <textarea class="input" id="notes" name="notes" rows="3" placeholder="Catatan tambahan..."><%= device ? device.notes || '' : '' %></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="button button--primary">
+          <i data-lucide="save"></i> <%= device ? 'Simpan Perubahan' : 'Tambah Perangkat' %>
+        </button>
+        <a href="/devices" class="button button--ghost">
+          <i data-lucide="x"></i> Batal
+        </a>
+      </div>
+    </form>
+  </div>
+</section>

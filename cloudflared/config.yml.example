@@ -1,0 +1,10 @@
+tunnel: netremote
+credentials-file: /etc/cloudflared/creds.json
+
+ingress:
+  - hostname: domain.com
+    path: /remote/*
+    service: http://app:3000   # use http://localhost:3000 when cloudflared runs on the host
+  - hostname: domain.com
+    service: http://app:3000
+  - service: http_status:404

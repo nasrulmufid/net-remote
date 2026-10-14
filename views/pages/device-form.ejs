@@ -1,0 +1,102 @@
+<div class="card">
+  <div class="card-header">
+    <h4><i class="fas fa-<%= device ? 'edit' : 'plus' %> me-2"></i><%= device ? 'Edit Perangkat' : 'Tambah Perangkat' %></h4>
+  </div>
+  <div class="card-body">
+    <form id="device-form" class="row g-3">
+      <div class="col-md-6">
+        <label for="name" class="form-label">Nama Perangkat <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="name" name="name" value="<%= device ? device.name : '' %>" required placeholder="Contoh: Server Produksi">
+      </div>
+
+      <div class="col-md-3">
+        <label for="ip" class="form-label">Alamat IP <span class="text-danger">*</span></label>
+        <input type="text" class="form-control" id="ip" name="ip" value="<%= device ? device.ip : '' %>" required placeholder="192.168.1.100">
+      </div>
+
+      <div class="col-md-3">
+        <label for="port" class="form-label">Port <span class="text-danger">*</span></label>
+        <input type="number" class="form-control" id="port" name="port" value="<%= device ? device.port : '80' %>" required min="1" max="65535">
+      </div>
+
+      <div class="col-md-6">
+        <label for="type" class="form-label">Tipe Perangkat</label>
+        <select class="form-select" id="type" name="type">
+          <option value="">- Pilih Tipe -</option>
+          <% (types || []).forEach(function(t) { %>
+          <option value="<%= t %>" <%= device && device.type === t ? 'selected' : '' %>><%= t %></option>
+          <% }); %>
+        </select>
+      </div>
+
+      <div class="col-md-6">
+        <label for="group" class="form-label">Grup</label>
+        <select class="form-select" id="group" name="group">
+          <option value="">- Pilih Grup -</option>
+          <% (groups || []).forEach(function(g) { %>
+          <option value="<%= g %>" <%= device && device.group === g ? 'selected' : '' %>><%= g %></option>
+          <% }); %>
+        </select>
+      </div>
+
+      <div class="col-12">
+        <label for="notes" class="form-label">Catatan</label>
+        <textarea class="form-control" id="notes" name="notes" rows="3" placeholder="Catatan tambahan..."><%= device ? device.notes || '' : '' %></textarea>
+      </div>
+
+      <div class="col-12">
+        <hr>
+        <div class="d-flex gap-2">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save me-1"></i> <%= device ? 'Simpan Perubahan' : 'Tambah Perangkat' %>
+          </button>
+          <a href="/devices" class="btn btn-secondary">
+            <i class="fas fa-times me-1"></i> Batal
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+  var form = document.getElementById('device-form');
+  if (!form) return;
+  var isEdit = <%= device ? 'true' : 'false' %>;
+  var uuid = '<%= device ? device.uuid : '' %>';
+
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    var btn = form.querySelector('[type="submit"]');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Menyimpan...';
+
+    var data = {
+      name: document.getElementById('name').value.trim(),
+      ip: document.getElementById('ip').value.trim(),
+      port: parseInt(document.getElementById('port').value, 10),
+      type: document.getElementById('type').value,
+      group: document.getElementById('group').value,
+      notes: document.getElementById('notes').value.trim(),
+    };
+
+    try {
+      if (isEdit) {
+        await NetRemote.api('PUT', '/api/devices/' + uuid, data);
+        NetRemote.toast('Perangkat berhasil diperbarui');
+      } else {
+        var res = await NetRemote.api('POST', '/api/devices', data);
+        NetRemote.toast('Perangkat berhasil ditambahkan');
+        window.location.href = '/devices/' + res.uuid;
+      }
+    } catch (err) {
+      NetRemote.toast('Gagal: ' + err.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = isEdit ? '<i class="fas fa-save me-1"></i> Simpan Perubahan' : '<i class="fas fa-save me-1"></i> Tambah Perangkat';
+    }
+  });
+})();
+</script>

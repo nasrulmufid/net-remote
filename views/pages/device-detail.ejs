@@ -1,0 +1,156 @@
+<div class="card">
+  <div class="card-header">
+    <h4><i class="fas fa-info-circle me-2"></i><%= device.name %></h4>
+    <div class="card-header-action">
+      <span class="badge badge-<%= device.status === 'online' ? 'success' : device.status === 'offline' ? 'danger' : 'secondary' %> badge-lg">
+        <span class="status-indicator <%= device.status || 'unknown' %>"></span>
+        <%= device.status || 'unknown' %>
+      </span>
+      <% if (user && user.role === 'admin') { %>
+      <a href="/devices/<%= device.uuid %>/edit" class="btn btn-primary btn-sm ms-2">
+        <i class="fas fa-edit me-1"></i> Edit
+      </a>
+      <% } %>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <table class="table table-borderless">
+          <tr>
+            <td class="text-muted" style="width: 140px;">UUID</td>
+            <td><code><%= device.uuid %></code></td>
+          </tr>
+          <tr>
+            <td class="text-muted">Alamat</td>
+            <td><code><%= device.ip %>:<%= device.port %></code></td>
+          </tr>
+          <tr>
+            <td class="text-muted">Tipe</td>
+            <td><%= device.type || '-' %></td>
+          </tr>
+          <tr>
+            <td class="text-muted">Grup</td>
+            <td><%= device.group || '-' %></td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-md-6">
+        <table class="table table-borderless">
+          <tr>
+            <td class="text-muted" style="width: 140px;">Latency</td>
+            <td><%= device.latency_ms != null ? device.latency_ms + ' ms' : '-' %></td>
+          </tr>
+          <tr>
+            <td class="text-muted">Terakhir Online</td>
+            <td><% if (device.last_online) { %><time data-ts="<%= device.last_online %>"></time><% } else { %>-<% } %></td>
+          </tr>
+          <tr>
+            <td class="text-muted">Terakhir Dicek</td>
+            <td><% if (device.last_check) { %><time data-ts="<%= device.last_check %>"></time><% } else { %>-<% } %></td>
+          </tr>
+          <tr>
+            <td class="text-muted">Remote Access</td>
+            <td>
+              <a href="/remote/<%= device.uuid %>" target="_blank" class="btn btn-sm btn-success">
+                <i class="fas fa-external-link-alt me-1"></i> Buka
+              </a>
+            </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Uptime Chart -->
+<div class="card">
+  <div class="card-header">
+    <h4><i class="fas fa-chart-line me-2"></i>Uptime &amp; Latency</h4>
+    <div class="card-header-action">
+      <span id="uptime-pct" class="text-muted me-2"></span>
+      <select id="chart-days" class="form-select form-select-sm" style="width: auto;">
+        <option value="1">1 hari</option>
+        <option value="7" selected>7 hari</option>
+        <option value="14">14 hari</option>
+        <option value="30">30 hari</option>
+      </select>
+    </div>
+  </div>
+  <div class="card-body">
+    <div id="uptime-chart" data-uuid="<%= device.uuid %>"></div>
+  </div>
+</div>
+
+<!-- Recent Checks -->
+<div class="card">
+  <div class="card-header">
+    <h4><i class="fas fa-heartbeat me-2"></i>Pengecekan Terakhir</h4>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Waktu</th>
+            <th>Status</th>
+            <th>Latency</th>
+            <th>Pesan</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% (checks || []).forEach(function(c) { %>
+          <tr>
+            <td><time data-ts="<%= c.checked_at %>"></time></td>
+            <td>
+              <span class="badge badge-<%= c.status === 'online' ? 'success' : 'danger' %>">
+                <%= c.status %>
+              </span>
+            </td>
+            <td><%= c.latency_ms != null ? c.latency_ms + ' ms' : '-' %></td>
+            <td><%= c.message || '-' %></td>
+          </tr>
+          <% }); %>
+          <% if (!checks || checks.length === 0) { %>
+          <tr><td colspan="4" class="text-center text-muted py-4">Belum ada data pengecekan</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Recent Remote Access -->
+<div class="card">
+  <div class="card-header">
+    <h4><i class="fas fa-history me-2"></i>Akses Remote Terakhir</h4>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Waktu</th>
+            <th>User</th>
+            <th>IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% (accesses || []).forEach(function(a) { %>
+          <tr>
+            <td><time data-ts="<%= a.created_at %>"></time></td>
+            <td><%= a.username || '-' %></td>
+            <td><code><%= a.ip %></code></td>
+          </tr>
+          <% }); %>
+          <% if (!accesses || accesses.length === 0) { %>
+          <tr><td colspan="3" class="text-center text-muted py-4">Belum ada akses remote</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script src="/vendor/apexcharts/apexcharts.min.js"></script>
+<script src="/js/charts.js"></script>

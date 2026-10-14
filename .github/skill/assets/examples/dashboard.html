@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Stisla SaaS</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stisla/css@3/dist/stisla.css" />
+  <style>
+    .app { display: flex; min-height: 100vh; }
+    .app__main { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+    .app__content { flex: 1; padding: 1.5rem; }
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; margin-bottom: 1.5rem; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" data-stisla-sidebar id="sidebar" style="--sidebar-width: 15rem; border-right: 1px solid var(--color-border);">
+      <div class="sidebar__header">
+        <a class="sidebar__brand" href="#">
+          <span style="font-weight:700;font-size:1.1rem;">Acme</span>
+        </a>
+      </div>
+      <div class="sidebar__content">
+        <div class="sidebar__group">
+          <div class="sidebar__group-title">Menu</div>
+          <ul class="sidebar__list">
+            <li class="sidebar__item">
+              <a class="sidebar__button" href="#" aria-current="page">
+                <span>Dashboard</span>
+              </a>
+            </li>
+            <li class="sidebar__item">
+              <a class="sidebar__button" href="#">
+                <span>Orders</span>
+              </a>
+            </li>
+            <li class="sidebar__item">
+              <a class="sidebar__button" href="#">
+                <span>Customers</span>
+              </a>
+            </li>
+            <li class="sidebar__item">
+              <a class="sidebar__button" href="#">
+                <span>Settings</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="sidebar__footer">
+        <button class="button button--ghost button--sm" data-stisla-sidebar-toggle="collapse" aria-controls="sidebar">
+          Collapse
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="app__main">
+      <header style="padding: 1rem 1.5rem; border-bottom: 1px solid var(--color-border); display:flex; align-items:center; justify-content:space-between;">
+        <h1 style="font-size:1.25rem; font-weight:600; margin:0;">Dashboard</h1>
+        <button class="button button--primary button--sm">New Order</button>
+      </header>
+
+      <main class="app__content">
+        <!-- Stats -->
+        <div class="stats">
+          <div class="card">
+            <div class="card__body">
+              <div style="color:var(--color-muted-foreground); font-size:0.875rem;">Revenue</div>
+              <div style="font-size:1.5rem; font-weight:600; margin-top:0.25rem;">$48,290</div>
+              <div style="color:var(--color-success); font-size:0.875rem; margin-top:0.25rem;">+12.5%</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__body">
+              <div style="color:var(--color-muted-foreground); font-size:0.875rem;">Orders</div>
+              <div style="font-size:1.5rem; font-weight:600; margin-top:0.25rem;">1,284</div>
+              <div style="color:var(--color-success); font-size:0.875rem; margin-top:0.25rem;">+8.2%</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__body">
+              <div style="color:var(--color-muted-foreground); font-size:0.875rem;">Customers</div>
+              <div style="font-size:1.5rem; font-weight:600; margin-top:0.25rem;">3,492</div>
+              <div style="color:var(--color-danger); font-size:0.875rem; margin-top:0.25rem;">−1.4%</div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card__body">
+              <div style="color:var(--color-muted-foreground); font-size:0.875rem;">Conversion</div>
+              <div style="font-size:1.5rem; font-weight:600; margin-top:0.25rem;">3.8%</div>
+              <div style="color:var(--color-success); font-size:0.875rem; margin-top:0.25rem;">+0.6%</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Orders -->
+        <div class="card">
+          <div class="card__header">
+            <h2 class="card__title">Recent Orders</h2>
+          </div>
+          <div class="card__body" style="padding:0;">
+            <div class="table-responsive">
+              <table class="table table--hover">
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th class="text-end">Total</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><a href="#">#10428</a></td>
+                    <td>Acme Corp</td>
+                    <td class="text-end">$1,490.00</td>
+                    <td><span class="badge badge--soft badge--warning">Processing</span></td>
+                  </tr>
+                  <tr>
+                    <td><a href="#">#10427</a></td>
+                    <td>Sonya Ryan</td>
+                    <td class="text-end">$312.50</td>
+                    <td><span class="badge badge--soft badge--success">Shipped</span></td>
+                  </tr>
+                  <tr>
+                    <td><a href="#">#10425</a></td>
+                    <td>Marcus Chen</td>
+                    <td class="text-end">$2,780.00</td>
+                    <td><span class="badge badge--soft badge--success">Completed</span></td>
+                  </tr>
+                  <tr>
+                    <td><a href="#">#10422</a></td>
+                    <td>Gilberto Botsford</td>
+                    <td class="text-end">$86.00</td>
+                    <td><span class="badge badge--soft badge--danger">Refunded</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@stisla/vanilla@3/dist/stisla.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<div class="card">
+  <div class="card__body text-center py-5">
+    <div class="empty-state">
+      <div class="empty-state__icon empty-state__icon--lg">
+        <i data-lucide="<%= code === 404 ? 'circle-help' : code === 403 ? 'lock' : 'bug' %>"></i>
+      </div>
+      <h1><%= code === 404 ? 'Halaman Tidak Ditemukan' : code === 403 ? 'Akses Ditolak' : 'Terjadi Kesalahan' %></h1>
+      <p><%= message %></p>
+      <a href="/" class="button button--primary">
+        <i data-lucide="house"></i> Kembali ke Dashboard
+      </a>
+    </div>
+  </div>
+</div>

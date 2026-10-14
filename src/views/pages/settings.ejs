@@ -1,0 +1,56 @@
+<header class="page-intro">
+  <p class="eyebrow">PREFERENSI AKUN</p>
+  <h1>Pengaturan</h1>
+  <p class="section-caption">Kelola akun dan keamanan sesi NetRemote Anda.</p>
+</header>
+
+<div class="row settings-grid">
+  <div class="col-12 col-lg-6">
+    <div class="card">
+      <div class="card__header">
+        <h2 class="card__title"><i data-lucide="user-cog"></i> Akun</h2>
+      </div>
+      <div class="card__body">
+        <dl class="detail-list">
+          <dt>Username</dt><dd><strong><%= user.username %></strong></dd>
+          <dt>Role</dt><dd><span class="badge badge--<%= user.role === 'admin' ? 'success' : 'secondary' %>"><%= user.role %></span></dd>
+        </dl>
+        <form action="/auth/logout" method="POST" class="mt-3">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button type="submit" class="button"><i data-lucide="log-out"></i> Keluar</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-12 col-lg-6">
+    <div class="card">
+      <div class="card__header">
+        <h2 class="card__title"><i data-lucide="shield"></i> Sesi</h2>
+      </div>
+      <div class="card__body">
+        <p class="text-muted">Keluar dari semua sesi aktif di perangkat lain.</p>
+        <form action="/auth/logout-all" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button type="submit" class="button button--danger">
+            <i data-lucide="log-out"></i> Keluar dari Semua Perangkat
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card__header">
+    <h2 class="card__title"><i data-lucide="info"></i> Tentang Aplikasi</h2>
+  </div>
+  <div class="card__body">
+    <dl class="detail-list">
+      <dt>Aplikasi</dt><dd><%= appName %></dd>
+      <dt>Versi</dt><dd>1.0.0</dd>
+      <dt>UI Template</dt><dd>Stisla v3</dd>
+      <dt>Framework</dt><dd>Fastify + Stisla</dd>
+    </dl>
+  </div>
+</div>

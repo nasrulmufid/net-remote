@@ -1,0 +1,68 @@
+<div class="card">
+  <div class="card-header">
+    <h4><i class="fas fa-history me-2"></i>Audit Log</h4>
+    <div class="card-header-action">
+      <form method="GET" class="d-flex gap-2">
+        <input type="search" class="form-control form-control-sm" name="action" placeholder="Filter aksi..." value="<%= action %>" style="width: 150px;">
+        <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-search"></i></button>
+      </form>
+    </div>
+  </div>
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Waktu</th>
+            <th>User</th>
+            <th>Aksi</th>
+            <th>Detail</th>
+            <th>IP</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% (data && data.items || []).forEach(function(a) { %>
+          <tr>
+            <td><time data-ts="<%= a.created_at %>"></time></td>
+            <td><%= a.username || '-' %></td>
+            <td><code><%= a.action %></code></td>
+            <td class="small text-muted">
+              <% if (a.metadata) { %>
+                <% if (a.metadata.uuid) { %>UUID: <%= a.metadata.uuid %><br><% } %>
+                <% if (a.metadata.name) { %>Nama: <%= a.metadata.name %><br><% } %>
+                <% if (a.metadata.changed) { %>Berubah: <%= a.metadata.changed.join(', ') %><% } %>
+              <% } %>
+            </td>
+            <td><code><%= a.ip %></code></td>
+          </tr>
+          <% }); %>
+          <% if (!data || !data.items || data.items.length === 0) { %>
+          <tr><td colspan="5" class="text-center text-muted py-4">Belum ada data audit</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if (data && data.totalPages > 1) { %>
+    <nav class="mt-3">
+      <ul class="pagination justify-content-center">
+        <li class="page-item <%= data.page <= 1 ? 'disabled' : '' %>">
+          <a class="page-link" href="?page=<%= data.page - 1 %><%= action ? '&action=' + encodeURIComponent(action) : '' %>">
+            <i class="fas fa-chevron-left"></i>
+          </a>
+        </li>
+        <% for (var p = Math.max(1, data.page - 2); p <= Math.min(data.totalPages, data.page + 2); p++) { %>
+        <li class="page-item <%= p === data.page ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= p %><%= action ? '&action=' + encodeURIComponent(action) : '' %>"><%= p %></a>
+        </li>
+        <% } %>
+        <li class="page-item <%= data.page >= data.totalPages ? 'disabled' : '' %>">
+          <a class="page-link" href="?page=<%= data.page + 1 %><%= action ? '&action=' + encodeURIComponent(action) : '' %>">
+            <i class="fas fa-chevron-right"></i>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <% } %>
+  </div>
+</div>

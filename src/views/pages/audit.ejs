@@ -1,0 +1,68 @@
+<section class="card audit-card" aria-labelledby="audit-heading">
+  <div class="card__header">
+    <div>
+      <p class="eyebrow">KEAMANAN & AKUNTABILITAS</p>
+      <h1 class="card__title" id="audit-heading"><i data-lucide="history"></i> Audit Log</h1>
+      <p class="section-caption"><%= data && data.total || 0 %> catatan tercatat</p>
+    </div>
+    <div class="card__actions">
+      <form method="GET" class="form-inline">
+        <div class="field field--inline">
+          <div class="field__input">
+            <span class="field__icon"><i data-lucide="search"></i></span>
+            <label class="visually-hidden" for="audit-action">Filter aksi</label>
+            <input id="audit-action" type="search" name="action" placeholder="Cari aksi..." value="<%= action %>">
+          </div>
+        </div>
+        <button type="submit" class="button button--primary button--sm">Cari</button>
+      </form>
+    </div>
+  </div>
+  <div class="card__body">
+    <div class="table-container">
+      <table class="table">
+        <thead>
+          <tr><th>Waktu</th><th>User</th><th>Aksi</th><th>Detail</th><th>IP</th></tr>
+        </thead>
+        <tbody>
+          <% (data && data.items || []).forEach(function(a) { %>
+          <tr>
+            <td><time data-ts="<%= a.created_at %>"></time></td>
+            <td><%= a.username || '-' %></td>
+            <td><code><%= a.action %></code></td>
+            <td class="text-muted small">
+              <% if (a.metadata) { %>
+                <% if (a.metadata.uuid) { %>UUID: <%= a.metadata.uuid %><br><% } %>
+                <% if (a.metadata.name) { %>Nama: <%= a.metadata.name %><br><% } %>
+                <% if (a.metadata.changed) { %>Berubah: <%= a.metadata.changed.join(', ') %><% } %>
+              <% } %>
+            </td>
+            <td><code><%= a.ip_address || '-' %></code></td>
+          </tr>
+          <% }); %>
+          <% if (!data || !data.items || data.items.length === 0) { %>
+          <tr><td colspan="5" class="text-center text-muted">Belum ada data audit</td></tr>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+
+    <% if (data && data.pages > 1) { %>
+    <nav class="pagination-nav" aria-label="Halaman audit">
+      <ul class="pagination">
+        <li class="pagination__item <%= data.page <= 1 ? 'pagination__item--disabled' : '' %>">
+          <a class="pagination__link" aria-label="Halaman sebelumnya" <%= data.page <= 1 ? 'aria-disabled="true"' : '' %> href="?page=<%= Math.max(1, data.page - 1) %><%= action ? '&action=' + encodeURIComponent(action) : '' %>">&laquo;</a>
+        </li>
+        <% for (var p = Math.max(1, data.page - 2); p <= Math.min(data.pages, data.page + 2); p++) { %>
+        <li class="pagination__item <%= p === data.page ? 'pagination__item--active' : '' %>">
+          <a class="pagination__link" <%= p === data.page ? 'aria-current="page"' : '' %> href="?page=<%= p %><%= action ? '&action=' + encodeURIComponent(action) : '' %>"><%= p %></a>
+        </li>
+        <% } %>
+        <li class="pagination__item <%= data.page >= data.pages ? 'pagination__item--disabled' : '' %>">
+          <a class="pagination__link" aria-label="Halaman berikutnya" <%= data.page >= data.pages ? 'aria-disabled="true"' : '' %> href="?page=<%= Math.min(data.pages, data.page + 1) %><%= action ? '&action=' + encodeURIComponent(action) : '' %>">&raquo;</a>
+        </li>
+      </ul>
+    </nav>
+    <% } %>
+  </div>
+</section>

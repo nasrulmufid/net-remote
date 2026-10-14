@@ -1,0 +1,72 @@
+<div class="row">
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header">
+        <h4><i class="fas fa-user-cog me-2"></i>Akun</h4>
+      </div>
+      <div class="card-body">
+        <table class="table table-borderless">
+          <tr>
+            <td class="text-muted" style="width: 120px;">Username</td>
+            <td><strong><%= user.username %></strong></td>
+          </tr>
+          <tr>
+            <td class="text-muted">Role</td>
+            <td><span class="badge badge-<%= user.role === 'admin' ? 'success' : 'secondary' %>"><%= user.role %></span></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card">
+      <div class="card-header">
+        <h4><i class="fas fa-shield-alt me-2"></i>Sesi</h4>
+      </div>
+      <div class="card-body">
+        <p class="text-muted mb-3">Keluar dari semua sesi aktif di perangkat lain.</p>
+        <form action="/auth/logout-all" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrf %>">
+          <button type="submit" class="btn btn-danger">
+            <i class="fas fa-sign-out-alt me-1"></i> Keluar dari Semua Perangkat
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card">
+  <div class="card-header">
+    <h4><i class="fas fa-info-circle me-2"></i>Tentang Aplikasi</h4>
+  </div>
+  <div class="card-body">
+    <div class="row">
+      <div class="col-md-6">
+        <table class="table table-borderless">
+          <tr>
+            <td class="text-muted" style="width: 140px;">Aplikasi</td>
+            <td><%= appName %></td>
+          </tr>
+          <tr>
+            <td class="text-muted">Versi</td>
+            <td>1.0.0</td>
+          </tr>
+        </table>
+      </div>
+      <div class="col-md-6">
+        <table class="table table-borderless">
+          <tr>
+            <td class="text-muted" style="width: 140px;">UI Template</td>
+            <td>Stisla Meridian</td>
+          </tr>
+          <tr>
+            <td class="text-muted">Framework</td>
+            <td>Fastify + Bootstrap 5</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
