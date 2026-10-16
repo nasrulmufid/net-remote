@@ -122,45 +122,75 @@
 		});
 
 	// ---- responsive sidebar ----
+	// Two independent states:
+	//   desktop rail  -> [data-collapsed] on the sidebar (owned by Stisla)
+	//   mobile drawer -> <html class="nav-open"> (owned here)
+	// Keeping them separate means collapsing the rail on desktop never hides the
+	// drawer on mobile, and vice versa.
 	var sidebar = $('#app-sidebar');
 	var sidebarBackdrop = $('.sidebar-backdrop');
-	var sidebarToggles = $$('[data-stisla-sidebar-toggle="collapse"]');
+	var navToggle = $('.navbar__toggle');
 	var mobileSidebar = window.matchMedia('(max-width: 1024px)');
-	function syncSidebar() {
-		if (!sidebar) return;
-		var open = !sidebar.hasAttribute('data-collapsed');
-		var showBackdrop = mobileSidebar.matches && open;
+
+	function isDrawerOpen() {
+		return document.documentElement.classList.contains('nav-open');
+	}
+	function syncDrawer() {
+		var open = isDrawerOpen();
+		document.documentElement.classList.toggle('nav-locked', open);
 		if (sidebarBackdrop) {
-			sidebarBackdrop.hidden = !showBackdrop;
-			sidebarBackdrop.classList.toggle('is-visible', showBackdrop);
+			sidebarBackdrop.hidden = !open;
+			sidebarBackdrop.classList.toggle('is-visible', open);
 		}
-		sidebarToggles.forEach(function (toggle) {
-			toggle.setAttribute('aria-expanded', String(open));
-		});
+		if (navToggle) navToggle.setAttribute('aria-expanded', String(open));
 	}
-	if (
-		sidebar &&
-		mobileSidebar.matches &&
-		!sidebar.hasAttribute('data-collapsed')
-	) {
-		sidebar.setAttribute('data-collapsed', '');
+	function openDrawer() {
+		if (!mobileSidebar.matches) return;
+		document.documentElement.classList.add('nav-open');
+		syncDrawer();
 	}
-	document.addEventListener('click', function (e) {
-		if (e.target.closest('[data-stisla-sidebar-toggle="collapse"]')) {
-			window.requestAnimationFrame(syncSidebar);
-		}
-	});
+	function closeDrawer() {
+		document.documentElement.classList.remove('nav-open');
+		syncDrawer();
+	}
+	function toggleDrawer() {
+		if (isDrawerOpen()) closeDrawer();
+		else openDrawer();
+	}
+
+	if (navToggle) navToggle.addEventListener('click', toggleDrawer);
+	if (sidebarBackdrop) sidebarBackdrop.addEventListener('click', closeDrawer);
 	document.addEventListener('keydown', function (e) {
-		if (e.key === 'Escape' && sidebarBackdrop && !sidebarBackdrop.hidden) {
-			sidebarBackdrop.click();
-			var navToggle = $('.navbar__toggle');
+		if (e.key === 'Escape' && isDrawerOpen()) {
+			closeDrawer();
 			if (navToggle) navToggle.focus();
 		}
 	});
-	if (typeof mobileSidebar.addEventListener === 'function') {
-		mobileSidebar.addEventListener('change', syncSidebar);
+	// Leaving the mobile breakpoint closes the drawer so it can't linger open.
+	// Entering mobile drops the desktop rail state so the drawer shows full labels;
+	// returning to desktop restores the user's rail preference.
+	var desktopCollapsed = sidebar
+		? sidebar.hasAttribute('data-collapsed')
+		: false;
+	function onBreakpointChange() {
+		if (!sidebar) return;
+		if (mobileSidebar.matches) {
+			desktopCollapsed = sidebar.hasAttribute('data-collapsed');
+			sidebar.removeAttribute('data-collapsed');
+			closeDrawer();
+		} else {
+			sidebar.toggleAttribute('data-collapsed', desktopCollapsed);
+		}
 	}
-	syncSidebar();
+	if (typeof mobileSidebar.addEventListener === 'function') {
+		mobileSidebar.addEventListener('change', onBreakpointChange);
+	} else if (typeof mobileSidebar.addListener === 'function') {
+		mobileSidebar.addListener(onBreakpointChange);
+	}
+	// Initial load on mobile: never start in rail mode.
+	if (sidebar && mobileSidebar.matches)
+		sidebar.removeAttribute('data-collapsed');
+	syncDrawer();
 
 	// ---- device list: filters + polling (server-rendered fragment) ----
 	var tbody = $('#device-rows'),

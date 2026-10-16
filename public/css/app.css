@@ -61,7 +61,8 @@
   position: sticky;
   top: 0;
   height: 100vh;
-  overflow-y: auto;
+  /* x hidden so the rail never shows a horizontal scrollbar; y scrolls the menu. */
+  overflow: hidden auto;
 }
 .app-main {
   flex: 1;
@@ -425,16 +426,23 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 .app-shell { min-height: 100vh; }
 .sidebar-backdrop { display: none; }
 .sidebar-backdrop[hidden] { display: none !important; }
+/* Sidebar: let Stisla own the geometry (width, gutters, rail re-centering) through its
+   --sidebar-* knobs. We only retune colors, typography and the brand mark, so the
+   [data-collapsed] rail width and the header/content/footer alignment stay correct. */
 .app-shell > .sidebar {
-  width: 258px;
-  min-width: 258px;
-  padding: 0 1rem;
+  --sidebar-width: 258px;
+  --sidebar-button-height: 42px;
+  --sidebar-button-padding-inline: .75rem;
+  --sidebar-button-icon-size: 1.1rem;
+  --sidebar-brand-icon-size: 2.55rem;
+  --sidebar-transition-duration: .22s;
   background: var(--nr-surface) !important;
   border-right: 1px solid var(--nr-border);
   box-shadow: 3px 0 18px rgba(28, 42, 68, .025);
   color: var(--nr-text);
 }
-.sidebar__header { min-height: 82px; padding: 1rem .5rem; border-bottom: 1px solid var(--nr-border); }
+.sidebar__header { border-bottom: 1px solid var(--nr-border); }
+.sidebar__content { padding-block: 1.25rem; }
 .sidebar__brand, .login-brand {
   display: inline-flex;
   align-items: center;
@@ -455,26 +463,22 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
   box-shadow: 0 5px 12px rgba(52, 89, 199, .22);
 }
 .brand-mark .lucide { width: 1.35rem; height: 1.35rem; }
+/* Keep the brand mark visible in rail mode (Stisla fades non-icon brand children). */
+.sidebar[data-collapsed] .sidebar__brand > .brand-mark { opacity: 1; pointer-events: auto; }
 .brand-copy { display: grid; gap: .03rem; line-height: 1.2; }
 .brand-copy strong { font-size: 1rem; letter-spacing: -.025em; }
 .brand-copy small { color: var(--nr-muted); font-size: .67rem; letter-spacing: .09em; text-transform: uppercase; }
-.sidebar__content { padding: 1.25rem 0; }
-.sidebar__group-title { padding: 0 .65rem; color: var(--nr-muted); font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.sidebar__group-title { color: var(--nr-muted); font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
 .sidebar__list { gap: .25rem; }
 .sidebar__button {
-  min-height: 42px;
-  padding: .65rem .75rem;
   border-radius: .55rem;
   color: var(--nr-muted);
   font-size: .875rem;
   font-weight: 550;
-  transition: background-color .16s ease, color .16s ease, transform .16s ease;
 }
-.sidebar__button .lucide { width: 1.1rem; height: 1.1rem; }
 .sidebar__button:hover { color: var(--nr-text); background: var(--nr-surface-soft); }
 .sidebar__button[aria-current="page"] { color: var(--nr-blue); background: color-mix(in srgb, var(--nr-blue) 9%, var(--nr-surface)); font-weight: 650; }
-.sidebar__footer { padding: .75rem 0 1.2rem; border-top: 1px solid var(--nr-border); }
-.sidebar__footer .sidebar__button { width: 100%; }
+.sidebar__footer { border-top: 1px solid var(--nr-border); }
 .app-main { min-width: 0; }
 .navbar.navbar--block {
   min-height: 64px;
@@ -627,10 +631,6 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
 .login-form { gap: 1.1rem; }
 .login-form .button { min-height: 44px; margin-top: .3rem; }
 
-@media (max-width: 1024px) {
-  .app-shell > .sidebar { z-index: 60; width: min(82vw, 290px); min-width: min(82vw, 290px); background: var(--nr-surface) !important; }
-  .sidebar-backdrop.is-visible { position: fixed; z-index: 55; inset: 0; display: block; width: 100%; height: 100%; border: 0; background: rgba(10, 17, 30, .42); }
-}
 @media (max-width: 760px) {
   .navbar.navbar--block { min-height: 58px; padding-inline: 1rem; }
   .app-content { padding: 1.1rem .85rem 1.5rem; }
@@ -699,22 +699,43 @@ button, a, input, select, textarea { -webkit-tap-highlight-color: transparent; }
   display: block;
 }
 
-/* Responsive */
+/* ===== Mobile navigation (off-canvas drawer) =====
+   Below 1024px the sidebar becomes a drawer. Its open state lives on
+   <html class="nav-open"> so it stays independent of the desktop rail
+   ([data-collapsed]), which is a separate, desktop-only affordance. */
 @media (max-width: 1024px) {
   .app-shell > .sidebar {
     position: fixed;
+    inset-block: 0;
     left: 0;
-    top: 0;
-    z-index: 50;
+    z-index: 60;
+    width: min(84vw, 300px);
+    min-width: min(84vw, 300px);
+    height: 100dvh;
     transform: translateX(-100%);
-    transition: transform 0.3s ease;
+    transition: transform .24s ease;
+    overscroll-behavior: contain;
+    will-change: transform;
   }
-  .app-shell > .sidebar:not([data-collapsed]) {
-    transform: translateX(0);
+  html.nav-open .app-shell > .sidebar { transform: translateX(0); }
+  .sidebar-backdrop.is-visible {
+    position: fixed;
+    z-index: 55;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    background: rgba(10, 17, 30, .5);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
   }
-  .app-shell > .sidebar[data-collapsed] {
-    transform: translateX(-100%);
-  }
+  /* The footer collapse control is a desktop rail affordance. */
+  .sidebar__footer [data-stisla-sidebar-toggle] { display: none; }
+  /* Reveal the navbar hamburger that opens the drawer. */
+  .navbar__toggle { display: inline-flex; }
+  /* Lock background scroll while the drawer is open. */
+  html.nav-locked, html.nav-locked body { overflow: hidden; }
 }
 
 @media (max-width: 768px) {
